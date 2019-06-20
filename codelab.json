@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "source": "steps.md",
+  "format": "html",
+  "prefix": "../../",
+  "mainga": "UA-49880327-14",
+  "updated": "2019-06-19T16:05:45+05:30",
+  "id": "01-Data-Meetup-Demo",
+  "duration": 32,
+  "title": "Demo: From data ingestion to insight prediction",
+  "author": "Ravi Ranjan",
+  "summary": "From data ingestion to insight prediction",
+  "theme": "",
+  "status": [
+    "draft"
+  ],
+  "category": [
+    "sdk"
+  ],
+  "tags": [
+    "python"
+  ],
+  "feedback": "github.com/raviranjan0309",
+  "ga": "0",
+  "url": "01-Data-Meetup-Demo"
+}

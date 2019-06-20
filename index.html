@@ -1,0 +1,228 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Demo: From data ingestion to insight prediction</title>
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="elements/codelab.html">
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <style is="custom-style">
+    body {
+      font-family: "Roboto",sans-serif;
+      background: var(--google-codelab-background, #F8F9FA);
+    }
+  </style>
+  
+</head>
+<body unresolved class="fullbleed">
+  <google-codelab title="Demo: From data ingestion to insight prediction"
+                  environment="web"
+                  feedback-link="github.com/raviranjan0309">
+    
+      <google-codelab-step label="Overview of the demo" duration="1">
+        <p>This demo shows you how to ingest, transform, explore and train ML model on without writing a single line of code. In this tutorial you will do the following:</p>
+<ul>
+<li>Simplifying data migration and integration</li>
+<li>Accelerating time to insights</li>
+<li>Turning data into predictions</li>
+</ul>
+<p><strong>Prerequesites</strong></p>
+<ul>
+<li>Basic understaing of extraction, transformation and ingestion of data.</li>
+<li>Basics of exploratory data analysis</li>
+<li>Basics of supervised machine learning algorithms</li>
+</ul>
+<aside class="warning"><p>Limitations: This is just a quick demo of end to end ML pipeline on structured dataset leveraging managed services of Google Cloud Platform.</p>
+</aside>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Introduction" duration="1">
+        <p>In this tutorial we will build end to end ML pipeline from data ingestion to prediction using newly launched Google Cloud Analytics managed services. We are in the era where technology grow exponentially and it become very difficutlt to analyze and do prediction in very short span of time. Google comes up with very innnovative products that will help Data analyst, engineer and scientist to perfrom basic operations on just few click, abstracting the complexity of code.</p>
+<p>From data ingestion to insight prediction: Google Cloud smart analytics accelerates your business transformation. Google introduced radically simple ways to move data into Google Cloud—and to clean, categorize, and understand it.</p>
+<p><strong>Case study</strong><br>This demo uses a publicly available dataset, Games of Thrones almost 2000 characters from the books to train a machine learing model to predict whether a character lives or dies. The model traning and performance is assessed using Google Cloud Auto ML, it shows a descent Accuracy of 75% indicating it can predict well whether a character lives or not based on the data.</p>
+<p><strong>What You&#39;ll Learn</strong></p>
+<ol type="1">
+<li>How to extract, transform and ingest data from GCS to BigQuery using Cloud Data Fusion (beta)</li>
+<li>How to perforom exploratory data analysis on processed data using BigQuery BI Engine (beta) and Data Studio</li>
+<li>How analyze, train and evaluate ML model using Google Cloud AutoML (beta)</li>
+</ol>
+<p><strong>What You&#39;ll Need</strong></p>
+<ol type="1">
+<li>An active <a href="https://cloud.google.com/resource-manager/docs/creating-managing-projects" target="_blank">GCP project</a></li>
+<li>Download dataset and push it to GCS bucket. <a href="https://github.com/raviranjan0309/Demo-From-data-ingestion-to-insight-prediction/blob/master/Data/character-predictions.csv" target="_blank">Download Dataset</a></li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Simplifying data migration and integration" duration="10">
+        <p>Cloud Data Fusion is a fully managed, cloud-native data integration service that helps users efficiently build and manage ETL/ELT data pipelines. With a graphical interface and a broad open-source library of preconfigured connectors and transformations, Data Fusion shifts an organization&#39;s focus away from code and integration to insights and action.</p>
+<p>This section shows you how to do basic operations in Cloud Data Fusion using the Google Cloud Platform Console. You will create a Cloud Data Fusion pipeline that completes the following tasks:</p>
+<ol type="1">
+<li>Reads a csv file containing GOT character death prediction data from Google Cloud Storage</li>
+<li>Runs basic transformations on the file to parse and clean the data</li>
+<li>Loads the parsed data into BigQuery table</li>
+</ol>
+<p><strong>Before you begin</strong></p>
+<ol type="1">
+<li>Select or create a Google Cloud Platform project. <a href="https://cloud.google.com/resource-manager/docs/creating-managing-projects" target="_blank">GCP project</a><a href="https://console.cloud.google.com/cloud-resource-manager?_ga=2.163079807.-230042825.1535092331&_gac=1.229438958.1560426979.Cj0KCQjw6IfoBRCiARIsAF6q06v1ZNxpMvFahZVNlF3836-3eID3U5rw0SxEf2_kZCBJGEaaXNKTE_UaAhVrEALw_wcB" target="_blank">GO TO THE MANAGE RESOURCE PAGE</a></li>
+<li>Enable the Cloud Data Fusion API. <a href="https://console.cloud.google.com/flows/enableapi?apiid=datafusion.googleapis.com&_ga=2.62737135.-230042825.1535092331&_gac=1.159178184.1560426979.Cj0KCQjw6IfoBRCiARIsAF6q06v1ZNxpMvFahZVNlF3836-3eID3U5rw0SxEf2_kZCBJGEaaXNKTE_UaAhVrEALw_wcB" target="_blank">ENABLE THE API</a></li>
+<li>Create a Cloud Data Fusion instance. <a href="https://console.cloud.google.com/data-fusion/instance-create?_ga=2.62737135.-230042825.1535092331&_gac=1.159178184.1560426979.Cj0KCQjw6IfoBRCiARIsAF6q06v1ZNxpMvFahZVNlF3836-3eID3U5rw0SxEf2_kZCBJGEaaXNKTE_UaAhVrEALw_wcB" target="_blank">OPEN THE CREATE INSTANCE PAGE</a><br>It takes up to 20 minutes to deploy Cloud Data Fusion. The instance creation process is completed when a green checkmark displays to the left of the instance name on the Instances page in the GCP Console.</li>
+<li>When instance creation completes, grant permissions to the service account associated with the instance.<br><br><ul>
+<li>In the <strong>Instances</strong> page, under <strong>Instance name</strong>, click the name of your instance.<br><img alt="cloud_data_fusion_1" src="img/34bc10e7611efa22.png"></li>
+<li>In the <strong>Instance details</strong> page that opens up, copy the <strong>Service account</strong> value.<br><img alt="cloud_data_fusion_2" src="img/a31af401eab8f5af.png"></li>
+<li>In the left navigation menu, under <strong>IAM &amp; Admin</strong>, navigate to the <strong>IAM</strong> page.</li>
+<li>At the top of the <strong>IAM</strong> page, click <strong>Add</strong>.</li>
+<li>In the <strong>Add members</strong> panel that opens, in the <strong>New members</strong> box, paste the service account that you copied.</li>
+<li>Under <strong>Select a role</strong>, start typing <strong>Cloud Data Fusion API Service Agent</strong>. Click the <strong>Cloud Data Fusion API Service Agent</strong> role.<br>![<img alt="cloud_data_fusion_2" src="img/966694b7014d4ba2.png"></li>
+<li>Click <strong>Save</strong>.</li>
+</ul>
+</li>
+</ol>
+<p><strong>View instance details</strong></p>
+<ol type="1">
+<li>In the GCP Console, open the <strong>Instances</strong> page. <a href="https://console.cloud.google.com/data-fusion/locations/-/instances?_ga=2.96273119.-230042825.1535092331&_gac=1.127293951.1560426979.Cj0KCQjw6IfoBRCiARIsAF6q06v1ZNxpMvFahZVNlF3836-3eID3U5rw0SxEf2_kZCBJGEaaXNKTE_UaAhVrEALw_wcB" target="_blank">OPEN THE INSTANCE PAGE</a></li>
+<li>Click the name of the instance to see its details. The <strong>Instance Details</strong> page provides information, such as the Cloud Data Fusion graphical interface, the zone, networking configuration, labels and advanced configuration.</li>
+</ol>
+<p><strong>Access the Cloud Data Fusion graphical interface</strong></p>
+<ol type="1">
+<li>In the GCP Console, open the <strong>Instances page</strong>. <a href="https://console.cloud.google.com/data-fusion/locations/-/instances?_ga=2.95842143.-230042825.1535092331&_gac=1.50327636.1560426979.Cj0KCQjw6IfoBRCiARIsAF6q06v1ZNxpMvFahZVNlF3836-3eID3U5rw0SxEf2_kZCBJGEaaXNKTE_UaAhVrEALw_wcB" target="_blank">OPEN THE INSTANCE PAGE</a></li>
+<li>In the <strong>Actions</strong> column for the instance, click the <strong>View Instance</strong> link. The Cloud Data Fusion graphical interface opens.</li>
+</ol>
+<p><strong>Deploy sample pipeline for GOT dataset</strong></p>
+<ol type="1">
+<li>Click and open <strong>Wrangler</strong> from dashboard.</li>
+<li>Go to <strong>Create a pipeline</strong> then <strong>Batch Pipeline</strong>.</li>
+<li>Click on <strong>Properties</strong> under <strong>GCSFile</strong>.</li>
+<li>Fill the required details.</li>
+<li>Goto <strong>Properties</strong> under <strong>Wrangler</strong>. Set columns name, datatypes and perfrom transformations on the dataset.</li>
+<li>Goto <strong>Sink</strong> and select <strong>BigQuery</strong>.</li>
+<li>Link <strong>Wrangler</strong> with <strong>BigQuery</strong>.</li>
+<li>Goto <strong>Properties</strong> under <strong>BigQuery</strong>. Set Reference Name, Dataset, Table.</li>
+<li>Set pipeline name and click <strong>Deploy</strong>.</li>
+</ol>
+<p><strong>View the pipeline</strong></p>
+<ol type="1">
+<li>After the pipeline is deployed, Cloud Data Fusion displays the pipeline on the Pipeline Detail page:<br><br><ul>
+<li>View the pipeline&#39;s structure and configuration</li>
+<li>Run the pipeline manually or set up a schedule or a trigger</li>
+<li>View a summary of the pipeline&#39;s historical runs, including execution times, logs, and metrics</li>
+</ul>
+</li>
+</ol>
+<p><strong>Execute your pipeline</strong></p>
+<ol type="1">
+<li>To execute your pipeline, click <strong>Run</strong> in the Pipeline Detail view.</li>
+</ol>
+<p><strong>View the results</strong></p>
+<ol type="1">
+<li>The pipeline takes a 10 minutes to complete. After pipeline completes, you can see the status of the pipeline transition to Succeeded and the number of records that each node in the pipeline has processed.</li>
+<li>To view the results of the GOT pipeline, go to the BigQuery UI. The results of the pipeline are in the table, which is inside the GOT dataset in your project.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Accelerating time to insights" duration="10">
+        <p>Google Data Studio visualize the data through highly configurable charts and tables. Easily connect to a variety of data sources. Share the insights with team or with the world. Collaborate on reports with team. Speed up the report creation process with built-in sample report</p>
+<p><strong>Steps to perform EDA on character prediction dataset and generate report</strong></p>
+<ol type="1">
+<li>Open <a href="https://datastudio.google.com/" target="_blank">Google Data Studio</a>.</li>
+<li>Goto <strong>Data Source</strong></li>
+<li>Click on <strong>+</strong> symbol and select BigQuery</li>
+<li>Under <strong>MY PROJECT</strong>, select GCP project where dataset is stored.</li>
+<li>Select GOT dataset and character prediction table and <strong>Connect</strong></li>
+<li>Verfiy all the feature columns on the dashboard and click on <strong>CREATE REPORT</strong></li>
+<li>Start performing all the ECA and save reports for future use.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Turning data into predictions" duration="10">
+        <p>AutoML Tables enables team of data scientists, analysts, and developers to automatically build and deploy state-of-the-art machine learning models on structured data at massively increased speed and scale. Transform the business by leveraging enterprise data to tackle mission-critical tasks.</p>
+<p>SEND FEEDBACK<br>AutoML Tables   Documentation<br>Quickstart<br>Beta</p>
+<p>This product or feature is in a pre-release state and might change or have limited support. For more information, see Product launch stages.</p>
+<p>This section walks you through the process of using AutoML Tables web application to do the following steps:</p>
+<ol type="1">
+<li>Create a dataset.</li>
+<li>Import table data from BigQuery into the dataset.</li>
+<li>Identify schema columns in the imported data.</li>
+<li>Train a model from the imported data.</li>
+<li>Use the model to make predictions.</li>
+</ol>
+<p>The entire process takes a couple of hours to complete. Most of that time is not active time; you can close your browser window and return to the task later.</p>
+<p><strong>Before you begin</strong></p>
+<ol type="1">
+<li>Create a project and enable AutoML Tables<br><br><ul>
+<li>In the GCP Console, go to the <strong>Manage resources</strong> page and select or create a project. <a href="https://console.cloud.google.com/cloud-resource-manager?_ga=2.103163715.-230042825.1535092331&_gac=1.53409114.1560426979.Cj0KCQjw6IfoBRCiARIsAF6q06v1ZNxpMvFahZVNlF3836-3eID3U5rw0SxEf2_kZCBJGEaaXNKTE_UaAhVrEALw_wcB" target="_blank">GO TO MANAGE RESOURCE PAGE</a></li>
+<li>Make sure that billing is enabled for your Google Cloud Platform project. <a href="https://cloud.google.com/billing/docs/how-to/modify-project" target="_blank">LEARN HOW TO ENABLE BILLING</a></li>
+<li>Enable the Cloud AutoML and Storage APIs. <a href="https://console.cloud.google.com/flows/enableapi?apiid=storage-component.googleapis.com,automl.googleapis.com,storage-api.googleapis.com&redirect=https://console.cloud.google.com&_ga=2.92096089.-230042825.1535092331&_gac=1.190124505.1560426979.Cj0KCQjw6IfoBRCiARIsAF6q06v1ZNxpMvFahZVNlF3836-3eID3U5rw0SxEf2_kZCBJGEaaXNKTE_UaAhVrEALw_wcB" target="_blank">ENABLE THE APIS</a></li>
+</ul>
+</li>
+</ol>
+<p><strong>1. Create a dataset and train a model</strong></p>
+<ol type="1">
+<li>Visit <strong>AutoML Tables</strong> in the Google Cloud Platform Console to begin the process of creating your dataset and training your model. <a href="https://console.cloud.google.com/automl-tables?_ga=2.166546429.-230042825.1535092331&_gac=1.195944030.1560426979.Cj0KCQjw6IfoBRCiARIsAF6q06v1ZNxpMvFahZVNlF3836-3eID3U5rw0SxEf2_kZCBJGEaaXNKTE_UaAhVrEALw_wcB" target="_blank">GO TO THE AUTOML TABLES PAGE</a></li>
+<li>Select <strong>Datasets</strong>, and then select <strong>New dataset</strong>.</li>
+<li>Select <strong>Table from BigQuery</strong> and fill Project ID, dataset ID and table ID. The dataset import takes a few minutes to complete.</li>
+<li>After the dataset import completes, select <strong>isAlive</strong> for the Target column. The target column identifies the value the model will be trained to predict. Click <strong>Continue</strong>.</li>
+<li>After the statistics for dataset have refreshed, you can review and verify the statistics for the imported data. Click individual rows to see more about distribution and correlation for a specific feature.</li>
+<li>Select the <strong>Train</strong> tab. Enter GOT_Character_Prediction_Model for Model name, and 1 for Training budget. Select input feature columns.</li>
+<li>In the <strong>Summary</strong> section, click the <strong>Train</strong> button to train your model. Model training takes about two hours to complete. After the model is successfully trained, the Train tab shows high-level metrics for the model.</li>
+<li>Select the <strong>Evaluate</strong> tab for a detailed view of the model evaluation metrics.</li>
+<li>Select the <strong>Predict</strong> tab, and click <strong>Online prediction</strong>.</li>
+<li>Click <strong>Deploy</strong> model to deploy the model. You must deploy your model before you can request online predictions. Deploying a model takes a few minutes to complete.</li>
+<li>AutoML Tables fills in sample data to help you test your model. Click <strong>PREDICT</strong> to request the online prediction.</li>
+</ol>
+<p><strong>Clean up all the resources</strong></p>
+<ol type="1">
+<li>Delete the BigQuery dataset and Cloud Data Fusion instance.</li>
+<li>Delete the reports from Google Cloud Data Studio.</li>
+<li>Undeploy ML model. Select Models and click on the model you want to undeploy. Select the Predict tab and click Online prediction. Click Remove deployment.</li>
+<li>Delete ML model. To delete a model, select Models. Click the More actions menu for the model that you want to delete, and then select Delete model.</li>
+<li>Delete the dataset, select Datasets. Click the More actions menu for the model that you want to delete, and then select Delete dataset.</li>
+<li>If there is no need to GCP prjoect, then delete the project.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-49880327-14', 'auto');
+
+    (function() {
+      var gaCodelab = '0';
+      if (gaCodelab) {
+        ga('create', gaCodelab, 'auto', {name: 'codelab'});
+      }
+
+      var gaView;
+      var parts = location.search.substring(1).split('&');
+      for (var i = 0; i < parts.length; i++) {
+        var param = parts[i].split('=');
+        if (param[0] === 'viewga') {
+          gaView = param[1];
+          break;
+        }
+      }
+      if (gaView && gaView !== gaCodelab) {
+        ga('create', gaView, 'auto', {name: 'view'});
+      }
+    })();
+  </script>
+
+</body>
+</html>
